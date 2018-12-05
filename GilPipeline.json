@@ -11,7 +11,7 @@
 	},
 	{
 		"application": "Local|Garden_PlantsServer",
-		"name": "2.2",
+		"name": "${plantsserverVersion}",
 		"kind": "ApplicationVersion"
 	},
 	{
@@ -20,7 +20,7 @@
 		"kind": "ApplicationVersion"
 	},
 	{
-		"applicationVersion": "Local|Garden_PlantsServer/2.2",
+		"applicationVersion": "Local|Garden_PlantsServer/${plantsserverVersion}",
 		"name": "sprint 5 (copy)",
 		"kind": "ContentSource",
 		"plugin": "Rally Platform/2.3",
@@ -40,7 +40,7 @@
 		"gil.naaman@gmail.com"],
 		"memberParties": ["caswatdemo@gmail.com",
 		"gil.naaman@gmail.com"],
-		"applicationVersions": ["Local|Garden_PlantsServer/2.2",
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsserverVersion}",
 		"Local|Garden_Ads/1.5",
 		"Local|Garden_Simulator/2.0",
 		"Local|Garden_HomePage/3.1"],
@@ -79,7 +79,7 @@
 		"kind": "Phase"
 	},
 	{
-		"applicationVersions": ["Local|Garden_PlantsServer/2.2"],
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsserverVersion}"],
 		"phase": "Garden/${releaseVersion}/Acceptance",
 		"isDisabled": false,
 		"name": "Deploy PlantsServer",
@@ -184,7 +184,7 @@
 		"type": "Post message"
 	},
 	{
-		"applicationVersions": ["Local|Garden_PlantsServer/2.2"],
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsserverVersion}"],
 		"phase": "Garden/${releaseVersion}/Staging",
 		"isDisabled": false,
 		"name": "Deploy PlantsServer",
@@ -256,7 +256,7 @@
 		"Deploy HomePage",
 		"Deploy Ads",
 		"Deploy Simulator"],
-		"applicationVersions": ["Local|Garden_PlantsServer/2.2",
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsserverVersion}",
 		"Local|Garden_HomePage/3.1",
 		"Local|Garden_Ads/1.5",
 		"Local|Garden_Simulator/2.0"],
@@ -266,7 +266,7 @@
 		"kind": "Task"
 	},
 	{
-		"applicationVersions": ["Local|Garden_PlantsServer/2.2"],
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsserverVersion}"],
 		"phase": "Garden/${releaseVersion}/Production",
 		"isDisabled": false,
 		"name": "Deploy PlantsServer",
@@ -338,7 +338,7 @@
 		"Deploy HomePage",
 		"Deploy Ads",
 		"Deploy Simulator"],
-		"applicationVersions": ["Local|Garden_PlantsServer/2.2",
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsserverVersion}",
 		"Local|Garden_HomePage/3.1",
 		"Local|Garden_Ads/1.5",
 		"Local|Garden_Simulator/2.0"],
