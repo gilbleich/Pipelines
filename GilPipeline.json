@@ -44,7 +44,7 @@
 		"Local|Garden_Ads/1.5",
 		"Local|Garden_Simulator/2.0",
 		"Local|Garden_HomePage/3.1"],
-		"version": ${releaseVersion},
+		"version": "${releaseVersion}",
 		"description": "<p>end of sprint release for the Garden service</p>",
 		"name": "Garden",
 		"kind": "Release"
