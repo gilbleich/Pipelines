@@ -71,9 +71,7 @@
 	{
 		"isApprovalRequired": false,
 		"previousPhase": "Staging",
-		"approvalGate": "SCHEDULED",
-		"plannedStartDate": "15/11/2018 10:09:00 Z",
-		"plannedEndDate": "16/11/2018 10:09:00 Z",
+		"approvalGate": "MANUAL",
 		"skipTasksWithUnchangedApplications": false,
 		"release": "Garden/${releaseVersion}",
 		"environments": ["G_Prod"],
