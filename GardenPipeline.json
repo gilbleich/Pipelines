@@ -1,0 +1,357 @@
+{
+	"objects": [{
+		"application": "Local|Garden_HomePage",
+		"name": "${homePageVersion}",
+		"kind": "ApplicationVersion"
+	},
+	{
+		"application": "Local|Garden_PlantsServer",
+		"name": "${plantsServerVersion}",
+		"kind": "ApplicationVersion"
+	},
+	{
+		"application": "Local|Garden_Ads",
+		"name": "${adsVersion}",
+		"kind": "ApplicationVersion"
+	},
+	{
+		"application": "Local|Garden_Simulator",
+		"name": "${simulatorVersion}",
+		"kind": "ApplicationVersion"
+	},
+	{
+		"applicationVersion": "Local|Garden_PlantsServer/${plantsServerVersion}",
+		"name": "sprint 1",
+		"kind": "ContentSource",
+		"endpoint": "Rally_Gil_Demo",
+		"plugin": "Rally Platform/2.3",
+		"parameters": {
+			"project": "Continuous Delivery Director",
+			"iteration": "CDD Iteration 3",
+			"type": "User Story,Defect"
+		},
+		"type": "Add Content"
+	},
+	{
+		"applicationVersion": "Local|Garden_PlantsServer/${plantsServerVersion}",
+		"commitRegularExpression": "^[ \\\\t]*([A-Za-z0-9_]+)",
+		"name": "2.3_commitSource (copy)",
+		"kind": "CommitSource",
+		"endpoint": "Github-Gil",
+		"plugin": "GitHub/1.0.1",
+		"parameters": {
+			"owner": "gilbleich",
+			"repository": "gettingStarted"
+		},
+		"type": "Get Commit Messages"
+	},
+	{
+		"version": "1",
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsServerVersion}",
+		"Local|Garden_Ads/${adsVersion}",
+		"Local|Garden_Simulator/${simulatorVersion}",
+		"Local|Garden_HomePage/${homePageVersion}"],
+		"ownerParties": ["superuser@ca.com"],
+		"runOnCreation": false,
+		"description": "<p>end of sprint release for the Garden service</p>",
+		"name": "Garden - EOS - ${sprint}",
+		"kind": "Release"
+	},
+	{
+		"release": "Garden - EOS - ${sprint}/1",
+		"environments": ["G_QA"],
+		"approvalGate": "AUTOMATIC",
+		"skipTasksWithUnchangedApplications": true,
+		"isApprovalRequired": false,
+		"name": "Acceptance",
+		"kind": "Phase"
+	},
+	{
+		"release": "Garden - EOS - ${sprint}/1",
+		"environments": ["G_Stg"],
+		"approvalGate": "MANUAL",
+		"previousPhase": "Acceptance",
+		"skipTasksWithUnchangedApplications": true,
+		"isApprovalRequired": false,
+		"name": "Staging",
+		"kind": "Phase"
+	},
+	{
+		"release": "Garden - EOS - ${sprint}/1",
+		"environments": ["G_Prod"],
+		"approvalGate": "MANUAL",
+		"previousPhase": "Staging",
+		"skipTasksWithUnchangedApplications": false,
+		"isApprovalRequired": false,
+		"name": "Production",
+		"kind": "Phase"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Acceptance",
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsServerVersion}"],
+		"isDisabled": false,
+		"name": "Deploy PlantsServer",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_PlantsServer.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Acceptance",
+		"applicationVersions": ["Local|Garden_HomePage/${homePageVersion}"],
+		"isDisabled": false,
+		"name": "Deploy HomePage",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_HomePage.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Acceptance",
+		"applicationVersions": ["Local|Garden_Ads/${adsVersion}"],
+		"isDisabled": false,
+		"name": "Deploy Ads",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "18",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Acceptance",
+		"applicationVersions": ["Local|Garden_Simulator/${simulatorVersion}"],
+		"isDisabled": false,
+		"name": "Deploy Simulator",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "3",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Acceptance",
+		"isDisabled": false,
+		"previousTasks": ["Deploy PlantsServer",
+		"Deploy HomePage",
+		"Deploy Ads",
+		"Deploy Simulator"],
+		"name": "Run UI tests",
+		"kind": "Task"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Acceptance",
+		"isDisabled": false,
+		"previousTasks": ["Deploy PlantsServer",
+		"Deploy HomePage",
+		"Deploy Ads",
+		"Deploy Simulator"],
+		"description": "<p><br /><br /><span style=\"font-size: 14px;text-align: justify;float: none;\">ontrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of &#34;de Finibus Bonorum et Malorum&#34; (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, &#34;Lorem ipsum dolor sit amet..&#34;, comes from a line in section 1.10.32.</span><br /><br /><br /><span style=\"color: rgba(0, 0, 0, 0.87);font-size: 14px;text-align: justify;float: none;\">classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of &#34;de Finibus Bonorum et Malorum&#34; (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is </span><br style=\"color: rgba(0, 0, 0, 0.87);font-size: 12px;\" /><br /><br /><br /></p>",
+		"name": "Run acceptance tests",
+		"kind": "Task"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Acceptance",
+		"isDisabled": false,
+		"previousTasks": ["Run UI tests",
+		"Run acceptance tests"],
+		"name": "Update Team",
+		"kind": "Task",
+		"endpoint": "Slack-Gil",
+		"plugin": "Slack/1.0",
+		"parameters": {
+			"message": "Acceptance complete",
+			"username": "CDDirector"
+		},
+		"type": "Post message"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Staging",
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsServerVersion}"],
+		"isDisabled": false,
+		"name": "Deploy PlantsServer",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_PlantsServer.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Staging",
+		"applicationVersions": ["Local|Garden_HomePage/${homePageVersion}"],
+		"isDisabled": false,
+		"name": "Deploy HomePage",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_HomePage.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Staging",
+		"applicationVersions": ["Local|Garden_Ads/${adsVersion}"],
+		"isDisabled": false,
+		"name": "Deploy Ads",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_Ads.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Staging",
+		"applicationVersions": ["Local|Garden_Simulator/${simulatorVersion}"],
+		"isDisabled": false,
+		"name": "Deploy Simulator",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_Simulator.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Staging",
+		"applicationVersions": ["Local|Garden_HomePage/${homePageVersion}",
+		"Local|Garden_PlantsServer/${plantsServerVersion}",
+		"Local|Garden_Simulator/${simulatorVersion}",
+		"Local|Garden_Ads/${adsVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Deploy PlantsServer",
+		"Deploy HomePage",
+		"Deploy Ads",
+		"Deploy Simulator"],
+		"name": "E2E testing",
+		"kind": "Task"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Production",
+		"applicationVersions": ["Local|Garden_PlantsServer/${plantsServerVersion}"],
+		"isDisabled": false,
+		"name": "Deploy PlantsServer",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_PlantsServer.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Production",
+		"applicationVersions": ["Local|Garden_HomePage/${homePageVersion}"],
+		"isDisabled": false,
+		"name": "Deploy HomePage",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_HomePage.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Production",
+		"applicationVersions": ["Local|Garden_Ads/${adsVersion}"],
+		"isDisabled": false,
+		"name": "Deploy Ads",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_Ads.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Production",
+		"applicationVersions": ["Local|Garden_Simulator/${simulatorVersion}"],
+		"isDisabled": false,
+		"name": "Deploy Simulator",
+		"kind": "Task",
+		"endpoint": "TestEP",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Garden_Simulator.last_successful_change%",
+			"detailed-status": "Running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "Running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Garden - EOS - ${sprint}/1/Production",
+		"applicationVersions": ["Local|Garden_HomePage/${homePageVersion}",
+		"Local|Garden_PlantsServer/${plantsServerVersion}",
+		"Local|Garden_Simulator/${simulatorVersion}",
+		"Local|Garden_Ads/${adsVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Deploy PlantsServer",
+		"Deploy HomePage",
+		"Deploy Ads",
+		"Deploy Simulator"],
+		"name": "E2E testing",
+		"kind": "Task"
+	}]
+}
