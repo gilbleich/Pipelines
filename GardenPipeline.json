@@ -52,7 +52,7 @@
 		"Local|Garden_Simulator/${simulatorVersion}",
 		"Local|Garden_HomePage/${homePageVersion}"],
 		"ownerParties": ["superuser@ca.com"],
-		"runOnCreation": false,
+		"runOnCreation": true,
 		"description": "<p>end of sprint release for the Garden service</p>",
 		"name": "Garden - EOS - ${sprint}",
 		"kind": "Release"
