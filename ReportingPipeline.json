@@ -1,0 +1,352 @@
+{
+	"objects": [{
+		"application": "Local|Web",
+		"name": "${Web_applicationVersion}",
+		"kind": "ApplicationVersion"
+	},
+	{
+		"application": "Local|Reporting",
+		"name": "${Reporting_applicationVersion}",
+		"kind": "ApplicationVersion"
+	},
+	{
+		"application": "Local|Mobile",
+		"name": "${Mobile_applicationVersion}",
+		"kind": "ApplicationVersion"
+	},
+	{
+		"applicationVersions": ["Local|Web/${Web_applicationVersion}",
+		"Local|Reporting/${Reporting_applicationVersion}",
+		"Local|Mobile/${Mobile_applicationVersion}"],
+		"ownerParties": ["bleichsivan@gmail.com"],
+		"markAsDonePhaseName": "",
+		"runOnCreation": false,
+		"version": "${Release_Version}",
+		"name": "Training - Sprint ${sprint}",
+		"kind": "Release"
+	},
+	{
+		"release": "Training - Sprint ${sprint}/${Release_Version}",
+		"scope": "RELEASE_SCOPE",
+		"value": "CHG0030130",
+		"name": "CR_ID",
+		"kind": "ReleaseToken"
+	},
+	{
+		"release": "Training - Sprint ${sprint}/${Release_Version}",
+		"scope": "RELEASE_SCOPE",
+		"value": "",
+		"name": "CR_JIRA_issueKey",
+		"kind": "ReleaseToken"
+	},
+	{
+		"release": "Training - Sprint ${sprint}/${Release_Version}",
+		"scope": "RELEASE_SCOPE",
+		"value": "",
+		"name": "CR_JIRA_issueID",
+		"kind": "ReleaseToken"
+	},
+	{
+		"release": "Training - Sprint ${sprint}/${Release_Version}",
+		"environments": ["Test"],
+		"approvalGate": "AUTOMATIC",
+		"skipTasksWithUnchangedApplications": true,
+		"isApprovalRequired": false,
+		"name": "Dev",
+		"kind": "Phase"
+	},
+	{
+		"release": "Training - Sprint ${sprint}/${Release_Version}",
+		"environments": ["Integration"],
+		"approvalGate": "SCHEDULED",
+		"plannedStartDate": "30/07/2019 03:30:00 Z",
+		"recurrence": {
+			"timeZoneId": "America/New_York",
+			"recurrencePattern": "DAILY"
+		},
+		"plannedEndDate": "30/07/2019 08:00:00 Z",
+		"previousPhase": "Dev",
+		"skipTasksWithUnchangedApplications": false,
+		"isApprovalRequired": false,
+		"name": "SIT",
+		"kind": "Phase"
+	},
+	{
+		"release": "Training - Sprint ${sprint}/${Release_Version}",
+		"environments": ["Production"],
+		"approvalGate": "SCHEDULED",
+		"plannedStartDate": "23/08/2019 09:21:00 Z",
+		"plannedEndDate": "24/08/2019 09:21:00 Z",
+		"previousPhase": "SIT",
+		"skipTasksWithUnchangedApplications": false,
+		"isApprovalRequired": false,
+		"name": "Production",
+		"kind": "Phase"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Dev",
+		"applicationVersions": ["Local|Reporting/${Reporting_applicationVersion}"],
+		"isDisabled": false,
+		"name": "Deploy Reporting",
+		"kind": "Task",
+		"endpoint": "CDA",
+		"plugin": "CDA/2.0.0",
+		"parameters": {
+			"package": "1.0",
+			"application": "Reporting",
+			"workflow": "Deploy",
+			"deployment_profile": "Gil_Local",
+			"install_mode": "Overwrite Existing",
+			"compensation_parameters": "false"
+		},
+		"type": "Start Application Workflow"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Dev",
+		"applicationVersions": ["Local|Web/${Web_applicationVersion}"],
+		"isDisabled": false,
+		"name": "Deploying Web",
+		"kind": "Task",
+		"endpoint": "TEST",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Web.last_successful_change%",
+			"detailed-status": "running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Dev",
+		"applicationVersions": ["Local|Mobile/${Mobile_applicationVersion}"],
+		"isDisabled": false,
+		"name": "Deploying Mobile",
+		"kind": "Task",
+		"endpoint": "TEST",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Mobile.last_successful_change%",
+			"detailed-status": "running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Dev",
+		"applicationVersions": ["Local|Reporting/${Reporting_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Deploy Reporting",
+		"Deploying Web",
+		"Deploying Mobile"],
+		"name": "Test - short cycle",
+		"kind": "Task"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Dev",
+		"isDisabled": false,
+		"previousTasks": ["Test - short cycle"],
+		"name": "Open JIRA ticket for next env",
+		"kind": "Task",
+		"endpoint": "JIRA",
+		"plugin": "Jira/2.0",
+		"parameters": {
+			"issueType": "Change Request",
+			"summary": "Approve SIT Reporting: %Reporting.last_successful_change%",
+			"projectKey": "SWCDDTRAIN",
+			"issueId": "%CR_JIRA_issueID%",
+			"issueKey": "%CR_JIRA_issueKey%",
+			"advanced": "false"
+		},
+		"type": "Create JIRA Issue"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"isDisabled": false,
+		"name": "Check JIRA ticket",
+		"kind": "Task",
+		"endpoint": "JIRA",
+		"plugin": "Jira/2.0",
+		"parameters": {
+			"issueId": "%CR_JIRA_issueID%",
+			"pollInterval": "120",
+			"requiredStatus": "CONFIRM"
+		},
+		"type": "Wait For Approval"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"applicationVersions": ["Local|Reporting/${Reporting_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Check JIRA ticket"],
+		"name": "Deploy Reporting",
+		"kind": "Task",
+		"endpoint": "CDA",
+		"plugin": "CDA/2.0.0",
+		"parameters": {
+			"package": "1.0",
+			"application": "Reporting",
+			"workflow": "Deploy",
+			"deployment_profile": "Gil_Local",
+			"install_mode": "Overwrite Existing",
+			"compensation_parameters": "false"
+		},
+		"type": "Start Application Workflow"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"applicationVersions": ["Local|Web/${Web_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Check JIRA ticket"],
+		"name": "Deploying Web",
+		"kind": "Task",
+		"endpoint": "TEST",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Web.last_successful_change%",
+			"detailed-status": "running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"applicationVersions": ["Local|Mobile/${Mobile_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Check JIRA ticket"],
+		"name": "Deploying Mobile",
+		"kind": "Task",
+		"endpoint": "TEST",
+		"plugin": "TestTask/1.0",
+		"parameters": {
+			"result-build-number": "%Mobile.last_successful_change%",
+			"detailed-status": "running",
+			"shall-fail": "false",
+			"number-iterations": "1",
+			"status": "running"
+		},
+		"type": "Run Test"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"applicationVersions": ["Local|Reporting/${Reporting_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Deploy Reporting",
+		"Deploying Web",
+		"Deploying Mobile"],
+		"name": "Test - full cycle",
+		"kind": "Task"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"isDisabled": false,
+		"previousTasks": ["Test - full cycle"],
+		"name": "Check Scan",
+		"kind": "Task",
+		"endpoint": "Sonar",
+		"plugin": "SonarQube/1.1",
+		"parameters": {
+			"projectKey": "com.hazelcast:hazelcast-kubernetes",
+			"failOnWarning": "false"
+		},
+		"type": "Check Project Status"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"isDisabled": false,
+		"previousTasks": ["Check Scan"],
+		"name": "Send message to team",
+		"kind": "Task",
+		"endpoint": "Slack",
+		"plugin": "Slack/1.1",
+		"parameters": {
+			"message": "SIT done successfully",
+			"username": "CDDirector"
+		},
+		"type": "Post message"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/SIT",
+		"isDisabled": false,
+		"previousTasks": ["Send message to team"],
+		"name": "Create CR",
+		"kind": "Task",
+		"endpoint": "ServiceNow",
+		"plugin": "ServiceNow/2.2",
+		"parameters": {
+			"changeRequestId": "%CR_ID%",
+			"changeRequestContent": "\"Status\":\"New\"",
+			"shortDescription": "Approve next env - PROD"
+		},
+		"type": "Create Change Request"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Production",
+		"isDisabled": false,
+		"name": "Wait for approval",
+		"kind": "Task",
+		"endpoint": "ServiceNow",
+		"plugin": "ServiceNow/2.2",
+		"parameters": {
+			"changeRequestId": "%CR_ID%",
+			"pollInterval": "240",
+			"statusField": "Status",
+			"requiredStatus": "Approved",
+			"ticketType": "Change Request"
+		},
+		"type": "Wait For Approval"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Production",
+		"applicationVersions": ["Local|Web/${Web_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Wait for approval"],
+		"name": "Deploy Web",
+		"kind": "Task"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Production",
+		"applicationVersions": ["Local|Reporting/${Reporting_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Wait for approval"],
+		"name": "Deploy Reporting",
+		"kind": "Task"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Production",
+		"applicationVersions": ["Local|Mobile/${Mobile_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Wait for approval"],
+		"name": "Deploy Mobile",
+		"kind": "Task"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Production",
+		"applicationVersions": ["Local|Reporting/${Reporting_applicationVersion}"],
+		"isDisabled": false,
+		"previousTasks": ["Deploy Web",
+		"Deploy Reporting",
+		"Deploy Mobile"],
+		"name": "Test",
+		"kind": "Task"
+	},
+	{
+		"phase": "Training - Sprint ${sprint}/${Release_Version}/Production",
+		"isDisabled": false,
+		"previousTasks": ["Test"],
+		"name": "Send message to team",
+		"kind": "Task",
+		"endpoint": "Slack",
+		"plugin": "Slack/1.1",
+		"parameters": {
+			"message": "SIT done successfully",
+			"username": "CDDirector"
+		},
+		"type": "Post message"
+	}]
+}
